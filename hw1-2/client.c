@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     int i;
     
     // Send 10 btye dummy message
-    char dummyMSG[] = "0123456789"; 
+    char dummyMSG[] = "0123456789s"; 
     char dummyMSG2[] = "ABCDEFGHIJ"; 
     char dummyMSG3[] = "KLMNOPQRST";
     
@@ -52,10 +52,12 @@ int main(int argc, char **argv)
     connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
 
     // Send 10 bytes dummy message
-    sendto(sock, dummyMSG, strlen(dummyMSG), 0, (struct sockaddr*)&serv_addr, sizeof(serv_addr)); 
-    sendto(sock, dummyMSG2, strlen(dummyMSG2), 0, (struct sockaddr*)&serv_addr, sizeof(serv_addr)); 
-    sendto(sock, dummyMSG3, strlen(dummyMSG3), 0, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
-    
+    // sendto(sock, dummyMSG, strlen(dummyMSG), 0, (struct sockaddr*)&serv_addr, sizeof(serv_addr)); 
+    // sendto(sock, dummyMSG2, strlen(dummyMSG2), 0, (struct sockaddr*)&serv_addr, sizeof(serv_addr)); 
+    // sendto(sock, dummyMSG3, strlen(dummyMSG3), 0, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
+    write(sock, dummyMSG, strlen(dummyMSG) + 1);
+    write(sock, dummyMSG2, strlen(dummyMSG2) + 1);
+    write(sock, dummyMSG3, strlen(dummyMSG3) + 1);
     while(1) {   
         fputs("Please input message (q to quit) : ", stdout); 
         fgets(message, sizeof(message), stdin); 
