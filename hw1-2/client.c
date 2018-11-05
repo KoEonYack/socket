@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     int i;
     
     // Send 10 btye dummy message
-    char dummyMSG[] = "0123456789s"; 
+    char dummyMSG[] =  "0123456789"; 
     char dummyMSG2[] = "ABCDEFGHIJ"; 
     char dummyMSG3[] = "KLMNOPQRST";
     
