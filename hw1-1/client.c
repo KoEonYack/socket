@@ -65,9 +65,9 @@ int main(int argc, char **argv)
         write(sock, message, strlen(message));
 
         /* 메세지 수신, 출력 */
-        str_len=read(sock, message, BUFSIZE-1);
-        message[str_len]=0;
-        printf("서버로부터 전송된 메시지 : %s \n", message);
+        // str_len=read(sock, message, BUFSIZE-1);
+        // message[str_len]=0;
+        // printf("서버로부터 전송된 메시지 : %s \n", message);
     }
 
     close(sock);
