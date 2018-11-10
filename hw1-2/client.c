@@ -16,9 +16,12 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-#define BUFSIZE 30
+#define BUFSIZE 32
 
 void error_handling(char *message);
+void clearBuf(char* b);
+char Cipher(char ch);
+int recvFile(char* buf, int s);
 
 int main(int argc, char **argv)
 { 
@@ -47,7 +50,8 @@ int main(int argc, char **argv)
     }
   
     memset(&serv_addr, 0, sizeof(serv_addr)); 
-    serv_addr.sin_family=AF_INET; serv_addr.sin_addr.s_addr=inet_addr(argv[1]); 
+    serv_addr.sin_family=AF_INET; 
+    serv_addr.sin_addr.s_addr=inet_addr(argv[1]); 
     serv_addr.sin_port=htons(atoi(argv[2]));
     connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
 
@@ -79,3 +83,32 @@ void error_handling(char *message)
     fputc('\n', stderr);
     exit(1);
 }
+
+void clearBuf(char* b) 
+{ 
+	int i; 
+	for (i = 0; i < NET_BUF_SIZE; i++) 
+		b[i] = '\0'; 
+} 
+
+// function for decryption 
+char Cipher(char ch) 
+{ 
+	return ch ^ cipherKey; 
+} 
+
+// function to receive file 
+int recvFile(char* buf, int s) 
+{ 
+	int i; 
+	char ch; 
+	for (i = 0; i < s; i++) { 
+		ch = buf[i]; 
+		ch = Cipher(ch); 
+		if (ch == EOF) 
+			return 1; 
+		else
+			printf("%c", ch); 
+	} 
+	return 0; 
+} 

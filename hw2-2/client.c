@@ -16,44 +16,14 @@
 #include <sys/types.h> 
 #include <unistd.h> 
 
-#define IP_PROTOCOL 0 
-#define IP_ADDRESS "127.0.0.1" // localhost 
-#define PORT_NO 15050 
-#define BUFSIZE 32 
+#define BUFSIZE 32
 #define cipherKey 'S' 
 #define sendrecvflag 0 
 
 void error_handling(char *message);
-
-// funtion to clear buffer 
-void clearBuf(char* b) 
-{ 
-	int i; 
-	for (i = 0; i < BUFSIZE; i++) 
-		b[i] = '\0'; 
-} 
-
-// function for decryption 
-char Cipher(char ch) 
-{ 
-	return ch ^ cipherKey; 
-} 
-
-// function to receive file 
-int recvFile(char* buf, int s) 
-{ 
-	int i; 
-	char ch; 
-	for (i = 0; i < s; i++) { 
-		ch = buf[i]; 
-		ch = Cipher(ch); 
-		if (ch == EOF) 
-			return 1; 
-		else
-			printf("%c", ch); 
-	} 
-	return 0; 
-} 
+void clearBuf(char* b);
+char Cipher(char ch);
+int recvFile(char* buf, int s);
 
 int main(int argc, char **argv) 
 { 
@@ -72,7 +42,7 @@ int main(int argc, char **argv)
         exit(1); 
     }
 
-	sockfd = socket(PF_INET, SOCK_DGRAM, IP_PROTOCOL); 
+	sockfd = socket(PF_INET, SOCK_DGRAM, 0); 
 	if (sockfd < 0) {
 		error_handling("ERROR : Can't open socket");
     }
@@ -83,12 +53,6 @@ int main(int argc, char **argv)
     serv_addr.sin_addr.s_addr=inet_addr(argv[1]); 
     serv_addr.sin_port=htons(atoi(argv[2]));
     connect(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
-
-    // 저거 
-	serv_addr.sin_family = PF_INET; 
-	serv_addr.sin_port = htons(PORT_NO); 
-	serv_addr.sin_addr.s_addr = inet_addr(IP_ADDRESS); 
-
 
 	while (1) { 
 		printf("\nPlease enter file name to receive:\n"); 
@@ -122,3 +86,33 @@ void error_handling(char *message)
     fputc('\n', stderr);
     exit(1);
 }
+
+// funtion to clear buffer 
+void clearBuf(char* b) 
+{ 
+	int i; 
+	for (i = 0; i < BUFSIZE; i++) 
+		b[i] = '\0'; 
+} 
+
+// function for decryption 
+char Cipher(char ch) 
+{ 
+	return ch ^ cipherKey; 
+} 
+
+// function to receive file 
+int recvFile(char* buf, int s) 
+{ 
+	int i; 
+	char ch; 
+	for (i = 0; i < s; i++) { 
+		ch = buf[i]; 
+		ch = Cipher(ch); 
+		if (ch == EOF) 
+			return 1; 
+		else
+			printf("%c", ch); 
+	} 
+	return 0; 
+} 
