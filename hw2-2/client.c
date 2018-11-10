@@ -55,7 +55,7 @@ int recvFile(char* buf, int s)
 	return 0; 
 } 
 
-int main(int argc, char ***argv) 
+int main(int argc, char **argv) 
 { 
 	int sockfd, nBytes; 
 	// struct sockaddr_in addr_con; 
