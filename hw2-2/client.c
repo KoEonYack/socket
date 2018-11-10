@@ -16,7 +16,10 @@
 #include <sys/types.h> 
 #include <unistd.h> 
 
-#define BUFSIZE 32
+#define IP_PROTOCOL 0 
+// #define IP_ADDRESS "127.0.0.1" // localhost 
+// #define PORT_NO 15050 
+#define NET_BUF_SIZE 32 
 #define cipherKey 'S' 
 #define sendrecvflag 0 
 
@@ -28,37 +31,34 @@ int recvFile(char* buf, int s);
 int main(int argc, char **argv) 
 { 
 	int sockfd, nBytes; 
-	// struct sockaddr_in addr_con; 
-    // int addrlen = sizeof(addr_con);
-    char net_buf[BUFSIZE]; 
-    FILE* fp;
-    
-    struct sockaddr_in serv_addr; 
-    int addrlen = sizeof(serv_addr);
-    struct sockaddr_in from_addr;
+	struct sockaddr_in addr_con; 
+	int addrlen = sizeof(addr_con); 
+	char net_buf[NET_BUF_SIZE]; 
+	FILE* fp; 
 
     if(argc!=3){ 
         printf("Usage : %s <IP> <port>\n", argv[0]); 
         exit(1); 
     }
 
-	sockfd = socket(PF_INET, SOCK_DGRAM, 0); 
+	sockfd = socket(AF_INET, SOCK_DGRAM, IP_PROTOCOL); 
 	if (sockfd < 0) {
 		error_handling("ERROR : Can't open socket");
-    }
+	}
 
-    // 이거
-    memset(&serv_addr, 0, sizeof(serv_addr)); 
-    serv_addr.sin_family=AF_INET; 
-    serv_addr.sin_addr.s_addr=inet_addr(argv[1]); 
-    serv_addr.sin_port=htons(atoi(argv[2]));
-    connect(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
+	addr_con.sin_family=AF_INET;
+	addr_con.sin_addr.s_addr=inet_addr(argv[1]);
+	addr_con.sin_port=htons(atoi(argv[2]));
 
 	while (1) { 
-		printf("\nPlease enter file name to receive:\n"); 
-		scanf("%s", net_buf); 
-		sendto(sockfd, net_buf, BUFSIZE, 
-			sendrecvflag, (struct sockaddr*)&serv_addr, 
+		printf("\nPlease enter file name to receive:(q to quit)\n"); 
+		scanf("%s", net_buf);
+		// fgets(net_buf, sizeof(net_buf), stdin);
+		// printf("\n%s\n", net_buf);
+		if(!strcmp(net_buf, "q\n")) break;
+
+		sendto(sockfd, net_buf, NET_BUF_SIZE, 
+			sendrecvflag, (struct sockaddr*)&addr_con, 
 			addrlen); 
 
 		printf("\n---------Data Received---------\n"); 
@@ -66,12 +66,12 @@ int main(int argc, char **argv)
 		while (1) { 
 			// receive 
 			clearBuf(net_buf); 
-			nBytes = recvfrom(sockfd, net_buf, BUFSIZE, 
-							sendrecvflag, (struct sockaddr*)&serv_addr, 
+			nBytes = recvfrom(sockfd, net_buf, NET_BUF_SIZE, 
+							sendrecvflag, (struct sockaddr*)&addr_con, 
 							&addrlen); 
 
 			// process 
-			if (recvFile(net_buf, BUFSIZE)) { 
+			if (recvFile(net_buf, NET_BUF_SIZE)) { 
 				break; 
 			} 
 		} 
@@ -87,11 +87,12 @@ void error_handling(char *message)
     exit(1);
 }
 
+
 // funtion to clear buffer 
 void clearBuf(char* b) 
 { 
 	int i; 
-	for (i = 0; i < BUFSIZE; i++) 
+	for (i = 0; i < NET_BUF_SIZE; i++) 
 		b[i] = '\0'; 
 } 
 
