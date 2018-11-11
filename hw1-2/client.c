@@ -83,32 +83,3 @@ void error_handling(char *message)
     fputc('\n', stderr);
     exit(1);
 }
-
-void clearBuf(char* b) 
-{ 
-	int i; 
-	for (i = 0; i < NET_BUF_SIZE; i++) 
-		b[i] = '\0'; 
-} 
-
-// function for decryption 
-char Cipher(char ch) 
-{ 
-	return ch ^ cipherKey; 
-} 
-
-// function to receive file 
-int recvFile(char* buf, int s) 
-{ 
-	int i; 
-	char ch; 
-	for (i = 0; i < s; i++) { 
-		ch = buf[i]; 
-		ch = Cipher(ch); 
-		if (ch == EOF) 
-			return 1; 
-		else
-			printf("%c", ch); 
-	} 
-	return 0; 
-} 

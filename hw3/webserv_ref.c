@@ -69,7 +69,7 @@ void* request_handler(void *arg)
 		send_error(clnt_write);
 		fclose(clnt_read);
 		fclose(clnt_write);
-		return;
+		return NULL;
 	 }
 	
 	strcpy(method, strtok(req_line, " /"));
@@ -80,7 +80,7 @@ void* request_handler(void *arg)
 		send_error(clnt_write);
 		fclose(clnt_read);
 		fclose(clnt_write);
-		return;
+		return NULL;
 	 }
 
 	fclose(clnt_read);
