@@ -52,9 +52,9 @@ int main(int argc, char **argv)
         error_handling("connect() error!");
     }
 
-    write(sock, dummyMSG, strlen(dummyMSG + 1));
-    write(sock, dummyMSG2, strlen(dummyMSG2 + 1));
-    write(sock, dummyMSG3, strlen(dummyMSG3 + 1));
+    write(sock, dummyMSG, strlen(dummyMSG));
+    write(sock, dummyMSG2, strlen(dummyMSG2));
+    write(sock, dummyMSG3, strlen(dummyMSG3));
 
     while(1) {
         /* 메세지 입력, 전송 */
