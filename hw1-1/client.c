@@ -52,9 +52,9 @@ int main(int argc, char **argv)
         error_handling("connect() error!");
     }
 
-    write(sock, dummyMSG, strlen(dummyMSG));
-    write(sock, dummyMSG2, strlen(dummyMSG2));
-    write(sock, dummyMSG3, strlen(dummyMSG3));
+    send(sock, dummyMSG, strlen(dummyMSG), 0);
+    send(sock, dummyMSG2, strlen(dummyMSG2), 0);
+    send(sock, dummyMSG3, strlen(dummyMSG3), 0);
 
     while(1) {
         /* 메세지 입력, 전송 */
@@ -62,10 +62,10 @@ int main(int argc, char **argv)
         fgets(message, BUFSIZE, stdin);
         if(!strcmp(message,"q\n")) break;
 
-        write(sock, message, strlen(message));
+        send(sock, message, strlen(message), 0);
 
         /* 메세지 수신, 출력 */
-        // str_len=read(sock, message, BUFSIZE-1);
+        // str_len=recv(sock, message, BUFSIZE-1);
         // message[str_len]=0;
         // printf("서버로부터 전송된 메시지 : %s \n", message);
     }

@@ -60,8 +60,8 @@ int main(int argc, char **argv)
     while( (str_len=read(clnt_sock,message, BUFSIZE)) != 0){
         message[str_len]=0;
         printf("클라이언트로 부터 전송된 메시지 : %s", message);
-        // write(clnt_sock, message, str_len);
-        // write(1, message, str_len);
+        // send(clnt_sock, message, str_len, 0);
+        // send(1, message, str_len, 0);
     }
 
     close(clnt_sock);
