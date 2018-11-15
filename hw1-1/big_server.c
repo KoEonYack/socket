@@ -4,7 +4,7 @@
     * 
     * @ Auth          : KoEonyack, GyeowoonJeong
     * @ Start Day     : 181105_2305
-    * @ Last Modified : 1181105_2305
+    * @ Last Modified : 181116_2305
     * @ Link          : https://github.com/KoEonYack/socket/ (PRIVATE GIT)
 **/
 
@@ -16,7 +16,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-#define BUFSIZE 1024
+#define BUFSIZE 100
 
 void error_handling(char *message);
 
@@ -51,13 +51,15 @@ int main(int argc, char **argv)
     clnt_addr_size=sizeof(clnt_addr);
     clnt_sock=accept(serv_sock, (struct sockaddr*)&clnt_addr,&clnt_addr_size);
     
-    sleep(3); // TODO : 5 sec sleep. 
+    //sleep(5); // TODO : 5 sec sleep. 
 
     if(clnt_sock==-1)
         error_handling("accept() error");
 
+    sleep(5);
+
     /* 데이터 수신 및 전송 */
-    while( (str_len=read(clnt_sock,message, BUFSIZE)) != 0){
+    while( (str_len=recv(clnt_sock, message, BUFSIZE, 0)) != 0){
         message[str_len]=0;
         printf("클라이언트로 부터 전송된 메시지 : %s", message);
         // send(clnt_sock, message, str_len, 0);
