@@ -48,19 +48,20 @@ int main(int argc, char **argv)
         error_handling("bind() error");
     }
 
-    sleep(2); 
-    
+    sleep(10); 
+   
     while(1) {
         clnt_addr_size=sizeof(clnt_addr); 
         sleep(1); 
         str_len = recvfrom(serv_sock, message, BUFSIZE, 0, (struct sockaddr*)&clnt_addr, &clnt_addr_size); 
-        message[str_len]=0;
+        //message[str_len]=0;
         if(!strcmp(message,"q\n")) break;
-        printf("Message from client : %s", message);
+        printf("Message from client : %s\n", message);
         // printf("수신 번호 : %d \n", num++); 
         // sendto(serv_sock, message, str_len, 0, (struct sockaddr*)&clnt_addr, sizeof(clnt_addr));
-    }
-
+      }
+    printf("통신종료");
+    //close(serv_sock);
     return 0;
 }
 
