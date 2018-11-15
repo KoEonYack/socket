@@ -56,19 +56,20 @@ int main(int argc, char **argv)
     connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
 
     // Send 10 bytes dummy message
-    // sendto(sock, dummyMSG, strlen(dummyMSG), 0, (struct sockaddr*)&serv_addr, sizeof(serv_addr)); 
-    // sendto(sock, dummyMSG2, strlen(dummyMSG2), 0, (struct sockaddr*)&serv_addr, sizeof(serv_addr)); 
-    // sendto(sock, dummyMSG3, strlen(dummyMSG3), 0, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
-    write(sock, dummyMSG, strlen(dummyMSG) + 1);
-    write(sock, dummyMSG2, strlen(dummyMSG2) + 1);
-    write(sock, dummyMSG3, strlen(dummyMSG3) + 1);
+    sendto(sock, dummyMSG, strlen(dummyMSG), 0, (struct sockaddr*)&serv_addr, sizeof(serv_addr)); 
+    sendto(sock, dummyMSG2, strlen(dummyMSG2), 0, (struct sockaddr*)&serv_addr, sizeof(serv_addr)); 
+    sendto(sock, dummyMSG3, strlen(dummyMSG3), 0, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
+    //write(sock, dummyMSG, strlen(dummyMSG) + 1);
+    //write(sock, dummyMSG2, strlen(dummyMSG2) + 1);
+    //write(sock, dummyMSG3, strlen(dummyMSG3) + 1);
     while(1) {   
         fputs("Please input message (q to quit) : ", stdout); 
         fgets(message, sizeof(message), stdin); 
 
-        if(!strcmp(message,"q\n")) break; 
-        write(sock, message, strlen(message));
-
+        // if(!strcmp(message,"q\n")) break; 
+        // write(sock, message, strlen(message));
+	sendto(sock, message, strlen(message), 0, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
+	if(!strcmp(message,"q\n")) break;
         // str_len=read(sock, message, sizeof(message)-1); 
         // message[str_len]=0;
         // printf("서버로부터 전송된 메시지 : %s", message);
