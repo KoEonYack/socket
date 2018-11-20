@@ -73,6 +73,9 @@ void respond(int client){
   int rcvd, fd, bytes_read;
   char *ROOT; // Directory of html file
 
+  char response_header[4096] = {0,};
+  char response_content[4096] = {0,}; // To post
+  
   memset( (void*)mesg, (int)'\0', 9999);
 
   rcvd = recv(client, mesg, 9999, 0);
@@ -86,11 +89,11 @@ void respond(int client){
   else{
     printf("%s", mesg);
     reqline[0] = strtok(mesg, " \t\n");
-
+    reqline[1] = strtok(NULL, " \t");
+    reqline[2] = strtok(NULL, " \t\n");
     if(strncmp(reqline[0], "GET\0", 4)==0) // GET 으로 request 하는 경우
     {
-      reqline[1] = strtok(NULL, " \t");
-      reqline[2] = strtok(NULL, " \t\n");
+      // move reqline 1, 2
       if (strncmp(reqline[2], "HTTP/1.0", 8) !=0 && strncmp(reqline[2], "HTTP/1.1", 8) != 0)
       {
         write(client, "HTTP/1.0 400 Bad Request\n", 25);
@@ -105,6 +108,10 @@ void respond(int client){
         }
         else if( strncmp(reqline[1], "/query.html\0", 11) == 0){
           reqline[1] = "./query.html";
+        }
+        else if (strncmp(reqline[0], "POST\0", 5)==0 && strncmp(reqline[1], "/sample\0", 7) == 0 ){ // 이 부분 로직은 불 필요하다. 
+          printf("HERE"); 
+
         }
         else{
           printf("\nHTML file not allocated...\n\n");
@@ -129,7 +136,27 @@ void respond(int client){
       }
     }
     else if(strncmp(reqline[0], "POST\0", 5)==0) { // POST method 로 request 하는 경우
+      printf("\ninput post part \n\n");
+      printf("\n\n[%s]\n\n", reqline[1]); // To get sample 
 
+      if( strncmp(reqline[1], "/sample\0", 7) == 0){
+        printf("\n/TODO implement sample\n");
+        
+        snprintf(response_content, sizeof(response_content), "<h2>POST value : %s</h2>", "test");
+        snprintf(response_header, sizeof(response_header), "HTTP/1.1 200 OK\r\n"
+			    "Content-Type: text/html\r\n"
+			    "Content-Length: %ld\r\n"
+			    "\r\n", strlen(response_content));
+
+        send(client, response_header, strlen(response_header), 0);
+        send(client, response_content, strlen(response_content), 0);
+
+      }else{
+        printf("\nNot sample file. \n");
+      }
+    }
+    else{                                         // GET 도 POST 도 아닌 경우
+      printf("\nMethod Error(Check it's GET or POST method)\n");
     }
   }
 
