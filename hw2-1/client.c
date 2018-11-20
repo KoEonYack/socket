@@ -27,24 +27,26 @@ int main(int argc, char* argv[])
 		exit(1);
 	}
 
-	//socket
+	//socket call
 	sock=socket(PF_INET, SOCK_STREAM, 0);
-	if(sock == -1)
+	if(sock == -1){
 		perror("socket() error");
+	}
 
 	memset(&serv_addr, 0, sizeof(serv_addr));
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_addr.s_addr = inet_addr(argv[1]);
 	serv_addr.sin_port = htons(atoi(argv[2]));
 
-	//connect
-	if(connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr))==-1)
+	//connect call
+	if(connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr))==-1){
 		perror("connect() error!");
+	}
+
+	printf("[Connection is ready!!]\n");
 	
-	printf("Server is connected\n");
-	
-	//파일명 입력
-	printf("Please Enter the file name to send to server.\n");
+	//Input file name
+	printf("Please Enter the file name to send [%s][%s]server.\n", argv[1], argv[2]);
 	scanf("%s",file_name);
 	str_len = strlen(file_name); 
 	printf("\n\n%d\n\n",str_len);
@@ -74,17 +76,17 @@ int main(int argc, char* argv[])
 	printf("\n\n%s\n\n",file_name);
 	printf("\n\n%d\n\n",str_len);
 	
-	/* 서버쪽에서 파일 이름과 contents를 구분하기 위해 filename 길이를 보내준다.*/
+	// 서버쪽에서 파일 이름과 contents를 구분하기 위해 filename 길이를 보내준다.
 	send(sock, &str_len, sizeof(int),0);
 
-	/* 파일 이름을 입력 받아서 먼저 전송해준다. */
+	//  입력 받은 파일 이름을 전송
 	send(sock, file_name, str_len, 0);
 
-	/* 파일이 text, binary 형태 중에 무엇인지 알려줌 */
+	// 파일 형태 (text, binary)를 보내줌.
 	send(sock, &file_mode, 1, 0);
 
-	/* 파일 전송 */
-	printf("\nStart File Transfer\n");
+	// 파일 전송
+	printf("\n[Start File Transfer]\n");
 	memset(message, 0, sizeof(message));
 	while((fs_block_size = fread(message, sizeof(char), sizeof(message), fp)) > 0){
 		str_len=send(sock, message, fs_block_size, 0);
@@ -94,9 +96,9 @@ int main(int argc, char* argv[])
 		}
 		memset(message, 0, sizeof(message));
 	}
-	printf("File Transfer ends\n");
 
-	/* 파일 전송 끝났음을 알려줌 */
+	printf("[File Transfer ends]\n");
+
 	fclose(fp);
 	getchar();
 	close(sock);
