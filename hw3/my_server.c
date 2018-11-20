@@ -87,7 +87,7 @@ void respond(int client){
     printf("%s", mesg);
     reqline[0] = strtok(mesg, " \t\n");
 
-    if(strncmp(reqline[0], "GET\0", 4)==0) // GET 으로 요청이 날라오는 경우
+    if(strncmp(reqline[0], "GET\0", 4)==0) // GET 으로 request 하는 경우
     {
       reqline[1] = strtok(NULL, " \t");
       reqline[2] = strtok(NULL, " \t\n");
@@ -100,8 +100,18 @@ void respond(int client){
         if( strncmp(reqline[1], "/\0", 2) == 0){
           reqline[1] = "./index.html";
         }
+        else if( strncmp(reqline[1], "/index.html\0", 11) == 0){
+          reqline[1] = "./index.html";
+        }
+        else if( strncmp(reqline[1], "/query.html\0", 11) == 0){
+          reqline[1] = "./query.html";
+        }
+        else{
+          printf("\nHTML file not allocated...\n\n");
+        }
 
-        ROOT = "./index.html";
+        // ROOT = "./index.html"; //change
+        ROOT = reqline[1];
         strcpy(path, ROOT);
         //strcpy(&path[strlen(ROOT)], reqline[1]);
         printf("file: %s\n", path);
@@ -117,6 +127,9 @@ void respond(int client){
           write(client, "HTTP/1.0 404 Not Found\n", 23); // file not found
         }
       }
+    }
+    else if(strncmp(reqline[0], "POST\0", 5)==0) { // POST method 로 request 하는 경우
+
     }
   }
 
