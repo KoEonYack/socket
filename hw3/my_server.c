@@ -111,9 +111,9 @@ void respond(int client){
         }
         else if (strncmp(reqline[0], "POST\0", 5)==0 && strncmp(reqline[1], "/sample\0", 7) == 0 ){ // 이 부분 로직은 불 필요하다. 
           printf("HERE"); 
-
         }
-        else{
+        else{     // page not found 
+          write(client, "HTTP/1.0 404 Not Found\n", 23);
           printf("\nHTML file not allocated...\n\n");
         }
 
