@@ -93,10 +93,12 @@ int main(int argc,char* argv[]){
 				break;
 			}
 
+			/* // Dummy code! Replace memset function 
 			for(i=0 ; i<BUF_SIZE ; i++){
 				buf[i]=0;
-				memset(buf, 0, sizeof(char));
 			}
+			*/
+			memset(buf, 0, sizeof(buf));
 		}
 		printf("\n\n===============================");
 		printf("\nTotal file size : %d bytes",write_cnt);
