@@ -37,7 +37,7 @@ int main(int argc,char* argv[]){
 	printf("\n[DEBUG] Input file name: [%s]\n",filename);
 
 	do{
-		printf("Ascii or Binary file(a/b) ");
+		printf("Ascii or Binary file(t/b) ");
 		scanf(" %c",&mode);
 	}while(!strchr("ab",tolower(mode)));
 
@@ -53,7 +53,7 @@ int main(int argc,char* argv[]){
 			file_mode='b';
 		}
 	}
-	else{
+	else if (mode == 't'){
 		fp = fopen(filename,"rt");
 		if(fp==NULL){
 			perror("File read Error (Check file name)");
@@ -62,6 +62,10 @@ int main(int argc,char* argv[]){
 		else{
 			file_mode='t';
 		}
+	}
+	else{
+		printf("\nMode input error!!\n");
+		exit(1);
 	}
 
 	printf("\nMode check: [%c]\n",file_mode);
