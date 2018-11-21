@@ -78,9 +78,9 @@ int main(int argc, char* argv[])
 			recv(client_sd,&str_len,sizeof(int),0);
 
 			memset(file_name,0,sizeof(file_name));
-			recv(client_sd,file_name, str_len, 0);
+			recv(client_sd,file_name, str_len, 0); // Read file name 
 
-			recv(client_sd, &file_mode, 1, 0);
+			recv(client_sd, &file_mode, 1, 0); // Read file mode 
 
 			// 입력 받은 모드 정보에 맞게 file open
 			if(file_mode=='t'){

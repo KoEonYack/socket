@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -49,7 +50,7 @@ int main(int argc, char* argv[])
 	printf("Please Enter the file name to send [%s][%s]server.\n", argv[1], argv[2]);
 	scanf("%s",file_name);
 	str_len = strlen(file_name); 
-	printf("\n\n%d\n\n",str_len);
+	//printf("\n\n%d\n\n",str_len);
 
 	//파일 모드 입력
 	do{
@@ -73,8 +74,7 @@ int main(int argc, char* argv[])
 		file_mode='t';
 	}
 	
-	printf("\n\n%s\n\n",file_name);
-	printf("\n\n%d\n\n",str_len);
+	printf("\n[File name:%s|str len:%d]\n",file_name, str_len);
 	
 	// 서버쪽에서 파일 이름과 contents를 구분하기 위해 filename 길이를 보내준다.
 	send(sock, &str_len, sizeof(int),0);
