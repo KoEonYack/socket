@@ -76,7 +76,8 @@ void respond(int client){
   int postFlag = 0;
   char response_header[4096] = {0,};
   char response_content[4096] = {0,}; // To post
-  
+  int i = 0;
+
   memset( (void*)mesg, (int)'\0', 9999);
 
   rcvd = recv(client, mesg, 9999, 0);
@@ -97,7 +98,7 @@ void respond(int client){
     // POST 메소드일때나 실행해라.
     
     if(strncmp(reqline[0], "POST\0", 5)==0) {
-      for(int i=3; i<16; i++){
+      for(i=3; i<16; i++){
         reqline[i] = strtok(NULL, "\r\n");
         // printf("\n[reqline[%d]=%s", i, reqline[i]); // For Debug
       }
