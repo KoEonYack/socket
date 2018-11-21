@@ -79,7 +79,7 @@ void respond(int client){
   memset( (void*)mesg, (int)'\0', 9999);
 
   rcvd = recv(client, mesg, 9999, 0);
-
+  
   if (rcvd < 0){
     perror("recv() error\n");
   }
@@ -136,12 +136,12 @@ void respond(int client){
       }
     }
     else if(strncmp(reqline[0], "POST\0", 5)==0) { // POST method 로 request 하는 경우
-      printf("\ninput post part \n\n");
+      printf("[input post part \n\n");
       printf("\n\n[%s]\n\n", reqline[1]); // To get sample 
 
       if( strncmp(reqline[1], "/sample\0", 7) == 0){
         printf("\n/TODO implement sample\n");
-        
+
         snprintf(response_content, sizeof(response_content), "<h2>POST value : %s</h2>", "test");
         snprintf(response_header, sizeof(response_header), "HTTP/1.1 200 OK\r\n"
 			    "Content-Type: text/html\r\n"
