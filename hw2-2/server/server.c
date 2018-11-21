@@ -10,10 +10,8 @@
 
 int main(int argc,char* argv[]){
 
-	int serv_sock;						// 서버 소켓 디스크립터
-
-	struct sockaddr_in serv_adr;		//ip address와 port number 등의 자료를 저장할 구조체
-	struct sockaddr_in clnt_adr;
+	int serv_sock;						
+	struct sockaddr_in serv_adr, clnt_adr;		
 	int clnt_adr_sz;		
 
 	FILE* fp;							// 파일 생성을 위한 파일 포인터 및 파일 모드 flag, 파일네임
@@ -21,27 +19,22 @@ int main(int argc,char* argv[]){
 	char filename[BUF_SIZE] = {0};
 	
 	int str_len=0;
-
 	int write_cnt=0;
-
 	char buf[BUF_SIZE] = {0};
-	
 	int i;
-	
 
 	if(argc != 2){
 		printf("Usage : %s <port>\n", argv[0]);
 		exit(1);
 	}
 
-	// 소켓 생성
 	if((serv_sock=socket(PF_INET, SOCK_DGRAM, 0))<0){
 		perror("socket() error");
 		exit(1);
+	}else{
+		printf("\n[Success create server socket]");
 	}
-	printf("\nserver sockect created\n");
-
-	// 구조체 초기화
+	
 	memset(&serv_adr, 0, sizeof(serv_adr));
 	serv_adr.sin_family=AF_INET;
 	serv_adr.sin_addr.s_addr=htonl(INADDR_ANY);
@@ -53,36 +46,34 @@ int main(int argc,char* argv[]){
 		perror("bind() error");
 		exit(1);
 	}
-	printf("\nbind succeed\n");
+	else{
+		printf("\n[Bind succeed]\n");
+		printf("Waiting Client Request...");
+	}
 
-	// 파일을 주고 받음
+	
 	while(1){
 
 		// 메세지 바운더리를 유지하므로, 클라이언트에서 입력한 파일네임의 크기 범위가 일치해야함!()
 		if((str_len=recvfrom(serv_sock, filename, BUF_SIZE, 0, (struct sockaddr*)&clnt_adr, &clnt_adr_sz))>=8
 			&&(str_len=recvfrom(serv_sock, filename, BUF_SIZE, 0, (struct sockaddr*)&clnt_adr, &clnt_adr_sz))<=12){
-			printf("\nfilename: %s\n",filename);
+			printf("\nRecve filename: %s\n",filename);
 		}
-		else{
-			filename[0]='t';
-			filename[1]='e';
-			filename[2]='s';
-			filename[3]='t';
-			filename[4]='.';
-			filename[5]='j';
-			filename[6]='p';
-			filename[7]='g';
-			filename[8]=0;
+		else{													// 파일 이름 전송에 실패 했을 때
+			printf("[Broken file name]\n");
+			strncpy(buf , "tempFile", strlen(8));
+			buf[8] = 0;
+
 		}
 
-		recvfrom(serv_sock, &file_mode, 1, 0, (struct sockaddr*)&clnt_adr, &clnt_adr_sz);
+		recvfrom(serv_sock, &file_mode, 1, 0, (struct sockaddr*)&clnt_adr, &clnt_adr_sz); // Recv mode 
 		
 		if(file_mode=='t'){
 			fp= fopen(filename,"wt");
 		}
-		else
+		else{
 			fp=fopen(filename,"wb");
-
+		}
 
 		while((str_len = recvfrom(serv_sock, buf, BUF_SIZE, 0, (struct sockaddr*)&clnt_adr, &clnt_adr_sz))!= 0 ){
 			fwrite((void*)buf,1,str_len,fp);
@@ -98,15 +89,18 @@ int main(int argc,char* argv[]){
 			// 따라서, 수신자쪽에서 위 모든 경우를 포괄하려면, 아래와 같아야 종료조건을 알 수 있게 된다.
 			// 수신자측의 버퍼사이즈가 송신자측의 버퍼사이즈보다 클 때, 종료 조건 str_len<CLIENT_BUF_SIZE
 			// 수신자측의 버퍼사이즈가 송신자측의 버퍼사이즈보다 작을 때, 종료 조건 str_len<BUF_SIZE
-			if(buf[str_len] == 0 && str_len < CLIENT_BUF_SIZE && str_len<BUF_SIZE)
+			if(buf[str_len] == 0 && str_len < CLIENT_BUF_SIZE && str_len<BUF_SIZE){ // 종료 조건
 				break;
+			}
 
 			for(i=0 ; i<BUF_SIZE ; i++){
 				buf[i]=0;
+				memset(buf, 0, sizeof(char));
 			}
 		}
-		printf("\ntotal file size : %d bytes",write_cnt);
-		printf("File transfer ended\n");
+		printf("\n\n===============================");
+		printf("\nTotal file size : %d bytes",write_cnt);
+		printf("\nEnd Transfer File\n");
 		fclose(fp);
 	}
 

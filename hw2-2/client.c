@@ -48,7 +48,7 @@ int main(int argc,char* argv[]){
 	if(mode=='b'){
 		fp = fopen(filename,"rb");
 		if(fp==NULL){
-			perror("File Open Error");
+			printf("File read Error (Check file name)");
 			exit(1);
 		}
 		file_mode='b';
@@ -56,7 +56,7 @@ int main(int argc,char* argv[]){
 	else{
 		fp = fopen(filename,"rt");
 		if(fp==NULL){
-			perror("File Open Error");
+			perror("File read Error (Check file name)");
 			exit(1);
 		}
 		file_mode='t';
