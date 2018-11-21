@@ -69,17 +69,19 @@ int main(int argc, char *args[]) {
 }
 
 void respond(int client){
-  char mesg[9999], *reqline[3], data_to_send[BYTES], path[99999];
+  char mesg[9999], *reqline[10], data_to_send[BYTES], path[99999];
+  char *postReqline[19];
   int rcvd, fd, bytes_read;
   char *ROOT; // Directory of html file
-
+  int postFlag = 0;
   char response_header[4096] = {0,};
   char response_content[4096] = {0,}; // To post
-  
+  int i = 0;
+
   memset( (void*)mesg, (int)'\0', 9999);
 
   rcvd = recv(client, mesg, 9999, 0);
-
+  
   if (rcvd < 0){
     perror("recv() error\n");
   }
@@ -91,6 +93,28 @@ void respond(int client){
     reqline[0] = strtok(mesg, " \t\n");
     reqline[1] = strtok(NULL, " \t");
     reqline[2] = strtok(NULL, " \t\n");
+    // printf("\n\n[reqline[1]=%s]\n[reqline[2]=%s",  reqline[1], reqline[2]); // For Debug
+
+    // POST 메소드일때나 실행해라.
+    
+    if(strncmp(reqline[0], "POST\0", 5)==0) {
+      for(i=3; i<16; i++){
+        reqline[i] = strtok(NULL, "\r\n");
+        // printf("\n[reqline[%d]=%s", i, reqline[i]); // For Debug
+      }
+      postFlag = 1;
+    }
+    
+  /*
+    if(strncmp(reqline[0], "POST\0", 5)==0) { 
+      postReqline[0] = strtok(mesg, " \t\n");
+      for(int i=0; i<10; i++){
+        postReqline[i] = strtok(NULL, " ");
+        printf("[%d]%s", i, postReqline[i]);
+      }
+    }
+*/
+
     if(strncmp(reqline[0], "GET\0", 4)==0) // GET 으로 request 하는 경우
     {
       // move reqline 1, 2
@@ -110,10 +134,10 @@ void respond(int client){
           reqline[1] = "./query.html";
         }
         else if (strncmp(reqline[0], "POST\0", 5)==0 && strncmp(reqline[1], "/sample\0", 7) == 0 ){ // 이 부분 로직은 불 필요하다. 
-          printf("HERE"); 
-
+          printf("Garbage");
         }
-        else{
+        else{     // page not found 
+          write(client, "HTTP/1.0 404 Not Found\n", 23);
           printf("\nHTML file not allocated...\n\n");
         }
 
@@ -135,14 +159,14 @@ void respond(int client){
         }
       }
     }
-    else if(strncmp(reqline[0], "POST\0", 5)==0) { // POST method 로 request 하는 경우
-      printf("\ninput post part \n\n");
+    else if(strncmp(reqline[0], "POST\0", 5)==0 || postFlag == 1) { // POST method 로 request 하는 경우
+      printf("[input post part]\n\n");
       printf("\n\n[%s]\n\n", reqline[1]); // To get sample 
 
       if( strncmp(reqline[1], "/sample\0", 7) == 0){
         printf("\n/TODO implement sample\n");
-        
-        snprintf(response_content, sizeof(response_content), "<h2>POST value : %s</h2>", "test");
+  
+        snprintf(response_content, sizeof(response_content), "<h2>POST value : %s</h2>", reqline[15]);
         snprintf(response_header, sizeof(response_header), "HTTP/1.1 200 OK\r\n"
 			    "Content-Type: text/html\r\n"
 			    "Content-Length: %ld\r\n"
@@ -153,9 +177,21 @@ void respond(int client){
 
       }else{
         printf("\nNot sample file. \n");
+
+        snprintf(response_content, sizeof(response_content), "<h2>POST value : %s</h2>", reqline[15]);
+        snprintf(response_header, sizeof(response_header), "HTTP/1.1 200 OK\r\n"
+			    "Content-Type: text/html\r\n"
+			    "Content-Length: %ld\r\n"
+			    "\r\n", strlen(response_content));
+
+        send(client, response_header, strlen(response_header), 0);
+        send(client, response_content, strlen(response_content), 0);
+
+
       }
     }
     else{                                         // GET 도 POST 도 아닌 경우
+      printf("\n%s : Method\n", reqline[0]);
       printf("\nMethod Error(Check it's GET or POST method)\n");
     }
   }
