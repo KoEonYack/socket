@@ -65,22 +65,12 @@ int main(int argc, char **argv)
             memset(file_name, 0, sizeof(file_name));
             recv(clnt_sock, file_name, str_len, 0);
 	    printf("received file name : %s\n", file_name);
-            recv(clnt_sock, &file_type, 1, 0);
-	    printf("received file type : %c\n", file_type);
 
-            switch(file_type) {
-                case 'a' : 
-                	fp = fopen(file_name, "wt");
-                	break;
-            
-            	case 'b' :
-                	fp = fopen(file_name, "wb");
-                	break;
-            }
+            fp = fopen(file_name, "wb");
 
             int fp_block_sz = 0;
 	    while(1){
-		printf("start to write in file\n");
+//		printf("start to write in file\n");
 		memset(message, 0, sizeof(message));
 		str_len=recv(clnt_sock, message, BUFSIZE, 0);
 		if(str_len==0)
