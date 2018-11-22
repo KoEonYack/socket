@@ -25,7 +25,7 @@ int main(int argc, char *args[]) {
 	socklen_t addr_len = sizeof(addr);
   socklen_t clnt_adr_sz;
 
-	int bind_port = 213035;
+	int bind_port = 21335;
 	int on = 1;
 
 	sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
