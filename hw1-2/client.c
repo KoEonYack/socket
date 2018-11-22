@@ -22,6 +22,7 @@ void error_handling(char *message);
 void clearBuf(char* b);
 char Cipher(char ch);
 int recvFile(char* buf, int s);
+void sigint_handler(int signo);
 
 int main(int argc, char **argv)
 { 
@@ -83,4 +84,10 @@ void error_handling(char *message)
     fputs(message, stderr);
     fputc('\n', stderr);
     exit(1);
+}
+
+void sigint_handler(int signo)
+{
+    printf("\n[Input ctrl+c condition One more input exit]");
+    signal
 }
