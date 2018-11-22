@@ -58,34 +58,9 @@ int main(int argc, char **argv)
     scanf("%s", file_name);
     str_len = strlen(file_name);
 
-    do {
-        printf("파일 형식을 선택하세요. (ASCII - (a), Binary - (b) : ");
-        scanf("%c", &file_type);
-    } while(!strchr("ab", tolower(file_type)));
 
-    file_type = tolower(file_type);
-
-
-    /* check file */
-    switch(file_type) {
-        case 'a' :
-            fp = fopen(file_name, "rt");
-            if(fp == NULL)
-                error_handling("no file existance error");
-            break;
-        case 'b' :
-            fp = fopen(file_name, "rb");
-            if(fp == NULL)
-                error_handling("no file existance error");
-            break;
-    }
-
-//    int i;
     send(sock, &str_len, sizeof(int), 0);	
-//    for (i = 0; i < 10; i++) {
-   	 send(sock, file_name, str_len, 0);
-  //  }
-  //  send(sock, &file_type, sizeof(char), 0);
+    send(sock, file_name, str_len, 0);
 
     fp = fopen(file_name, "rb");
     if(fp == NULL)
